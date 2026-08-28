@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "note": "Everything needed to reproduce the shipped core binary. Nothing here points at a checkout outside this repository: a fresh clone plus Docker is the whole toolchain. `make core` refuses to package an artifact whose sha256 does not match, so this file is the contract between the build and the pak.",
+  "core": {
+    "id": "scummvm",
+    "source_url": "https://github.com/libretro/scummvm.git",
+    "source_commit": "825fea130aba5a55005c307fb22fce2445749317",
+    "license": "GPL-3.0-or-later",
+    "license_path_in_source": "COPYING"
+  },
+  "build_dependencies": [
+    {
+      "name": "libretro-deps",
+      "url": "https://github.com/libretro/libretro-deps",
+      "commit": "bab7d258c451c0e7cba4b6a79f1b062c13efff38",
+      "note": "Pinned by the upstream libretro backend's dependencies.mk; recorded here so the pin is visible without reading the source."
+    },
+    {
+      "name": "libretro-common",
+      "url": "https://github.com/libretro/libretro-common",
+      "commit": "879c8d507b0b52e77e27d759239c2b5df1e26dfd",
+      "note": "As above."
+    }
+  ],
+  "toolchain": {
+    "image": "ghcr.io/utility-muffin-research-kitchen/mlp1-toolchain:latest",
+    "note": "Public image, pullable anonymously. Pin the digest below once you have verified a build; a tag can move under you and a moved toolchain changes the binary.",
+    "digest": "sha256:66aac16fb8b07e663c9b4d66970f272df195a6eba98dfad8286eabbaa617faf9",
+    "cross_prefix": "aarch64-buildroot-linux-gnu",
+    "target": "aarch64 Cortex-A55, glibc (Miniloong Pocket 1 / RK3566)"
+  },
+  "artifact": {
+    "file_name": "scummvm_libretro.so",
+    "sha256": "b92feaa38538a7c890e454526e9c0b7e451e960cbc0108c5197189775d83df3b",
+    "note": "Recorded from one verified build in the digest-pinned toolchain image on 2026-08-28. NOT yet independently reproduced on a second machine -- do that before trusting it as a reproducibility claim. The binary embeds no build timestamp, so a matching rebuild is expected; if yours differs, investigate rather than overwriting this.",
+    "size_bytes": 132238072
+  }
+}

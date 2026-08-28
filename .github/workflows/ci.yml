@@ -16,7 +16,7 @@ env:
   # Pin the contract, not a branch. A moving contract that silently changes
   # what "valid" means is the thing this pin exists to prevent; bumping it is
   # a reviewed commit here.
-  CONTRACT_REF: 5c7404376ed5462bf67f886256af2321a4dc6d76
+  CONTRACT_REF: ad5b27d3489c0dd7f3ebecb787563e8703c14945
 
 jobs:
   validate:

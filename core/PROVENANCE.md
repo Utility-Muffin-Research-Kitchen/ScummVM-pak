@@ -51,8 +51,10 @@ compiler produces a different binary.
 make platform=unix \
      CC=aarch64-buildroot-linux-gnu-gcc \
      CXX=aarch64-buildroot-linux-gnu-g++ \
-     AR=aarch64-buildroot-linux-gnu-ar \
+     AR="aarch64-buildroot-linux-gnu-ar cru" \
+     RANLIB=aarch64-buildroot-linux-gnu-ranlib \
      STRIP=aarch64-buildroot-linux-gnu-strip \
+     GIT_TAG= GIT_HASH=825fea13 \
      NO_WIP=1 -j$(nproc)
 ```
 
@@ -68,16 +70,27 @@ upstream's board presets (`rpi3_64`, `rpi4_64`, …): those carry board-specific
 tuning flags that are wrong for an RK3566, and being explicit is clearer than
 inheriting someone else's `-mcpu`.
 
+The eight-character `GIT_HASH` is derived from the pinned source commit and
+passed explicitly. Upstream otherwise runs `git rev-parse --short` inside the
+container. That produced different binaries when Git chose a longer
+abbreviation from a populated local object database, and produced no hash at
+all when a Linux bind mount triggered Git's ownership safety check. Neither is
+a source change, so neither should be allowed to change the artifact.
+
+`FORCE=1 make core` removes ignored and untracked products from the cached
+source tree before building. Without that clean, a nominal rebuild could reuse
+objects compiled with an older command line and give a false verification.
+
 ## Artifact
 
 `core.lock.json` carries the `sha256` of the built `.so`. `build-core.sh`
 compares against it and **fails** on a mismatch rather than packaging whatever
 was produced.
 
-Until a build has been reproduced and verified, that field reads
-`PENDING-FIRST-VERIFIED-BUILD` and the script says so instead of claiming a
-match. A hash recorded from a single unreproduced build is a hash that only
-proves the build agreed with itself.
+The current hash was recorded from a clean build on 2026-08-29 after removing
+the host-dependent Git revision behavior described above. CI performs the
+independent build from a fresh clone; a successful main or manually dispatched
+build is the second-machine verification.
 
 ### Recording a hash
 
@@ -86,10 +99,10 @@ proves the build agreed with itself.
 3. If they agree, put it in `core.lock.json`. If they do not, find out why
    before recording either.
 
-Note that libretro's build embeds a build date in some cores, which can make
-bit-identical rebuilds impossible. If the two hashes differ, check whether the
-difference is a timestamp before assuming the toolchain moved — and if it is,
-say so here rather than pretending the hash is reproducible.
+If two hashes differ, inspect every input before changing the lock. For this
+core the first mismatch was not a timestamp: it was upstream's implicit Git
+revision lookup changing with clone history and bind-mount ownership. The build
+now supplies that value explicitly.
 
 ## Non-commercial constraints
 

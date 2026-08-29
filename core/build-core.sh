@@ -30,6 +30,7 @@ lock_get() {
 
 SOURCE_URL="$(lock_get "['core']['source_url']")"
 SOURCE_COMMIT="$(lock_get "['core']['source_commit']")"
+SOURCE_REV="${SOURCE_COMMIT:0:8}"
 IMAGE="$(lock_get "['toolchain']['image']")"
 DIGEST="$(lock_get "['toolchain']['digest']")"
 CROSS="$(lock_get "['toolchain']['cross_prefix']")"
@@ -61,6 +62,11 @@ else
   [ "$ACTUAL_COMMIT" = "$SOURCE_COMMIT" ] \
     || die "checked out $ACTUAL_COMMIT, lock says $SOURCE_COMMIT"
 
+  if [ "${FORCE:-0}" = "1" ]; then
+    echo "build-core: removing cached build products for a clean rebuild"
+    git -C "$SRC_DIR" clean -qfdx
+  fi
+
   echo "build-core: building in $IMAGE_REF"
   docker run --rm \
     -v "$SRC_DIR":/src \
@@ -76,11 +82,19 @@ else
       make platform=unix \
         CC="${TC}-gcc" CXX="${TC}-g++" \
         AR="${TC}-ar cru" RANLIB="${TC}-ranlib" STRIP="${TC}-strip" \
+        GIT_TAG= GIT_HASH='"$SOURCE_REV"' \
         NO_WIP=1 -j"$(nproc)"
       cp '"$ARTIFACT"' /out/
       "${TC}-strip" --strip-unneeded /out/'"$ARTIFACT"'
     '
 fi
+
+# Docker Desktop can return before a bind-mounted artifact becomes visible to
+# the host. Give the mount a brief chance to catch up before declaring failure.
+for _ in {1..50}; do
+  [ -f "$OUT_DIR/$ARTIFACT" ] && break
+  sleep 0.1
+done
 
 [ -f "$OUT_DIR/$ARTIFACT" ] || die "build produced no $ARTIFACT"
 

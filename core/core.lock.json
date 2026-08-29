@@ -31,8 +31,8 @@
   },
   "artifact": {
     "file_name": "scummvm_libretro.so",
-    "sha256": "b92feaa38538a7c890e454526e9c0b7e451e960cbc0108c5197189775d83df3b",
-    "note": "Recorded from one verified build in the digest-pinned toolchain image on 2026-08-28. NOT yet independently reproduced on a second machine -- do that before trusting it as a reproducibility claim. The binary embeds no build timestamp, so a matching rebuild is expected; if yours differs, investigate rather than overwriting this.",
-    "size_bytes": 132238072
+    "sha256": "1d8567615a8683d3dee11364f54a683afc8614fe0d5aeaffd11dd17fbfbb6323",
+    "note": "Recorded from a clean build in the digest-pinned toolchain image on 2026-08-29. The build passes the source revision explicitly so Git ownership and abbreviation rules cannot change the binary between hosts. CI is the independent verifier; investigate any mismatch rather than overwriting this value.",
+    "size_bytes": 132225784
   }
 }

@@ -20,7 +20,7 @@
         "image_root": "Images/SCUMMVM",
         "default_core": "scummvm",
         "icon_flat": "art/SCUMMVM.png",
-        "icon_photographic": null,
+        "icon_photographic": "art/SCUMMVM-photo.png",
         "screenscraper_platform_ids": [123],
         "group": "Computer",
         "bios_directory": null

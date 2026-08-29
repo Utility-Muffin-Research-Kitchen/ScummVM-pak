@@ -1,13 +1,14 @@
 # Licensing
 
-Three different things ship in this repository and they are not under one
-licence. Read this before redistributing the built pak.
+The components in this repository are not under one licence. Read this before
+redistributing the built pak.
 
 | What | Licence | Where |
 | --- | --- | --- |
 | The ScummVM libretro core (`scummvm_libretro.so`) | **GPL-3.0-or-later** | `CORE-LICENSE.txt` |
 | This repository's build system, manifests, scripts | MIT (see `REPO-LICENSE.txt`) | — |
-| `pak/art/SCUMMVM.png` | CC0 1.0 | `../pak/art/LICENSE-ASSETS.md` |
+| `pak/art/SCUMMVM.png` | CC BY-SA 4.0 | `../pak/art/LICENSE-ASSETS.md` |
+| `pak/art/SCUMMVM-photo.png` | AI-generated render; no copyright claimed | `../pak/art/LICENSE-ASSETS.md` |
 
 ## The GPLv3 obligation, concretely
 

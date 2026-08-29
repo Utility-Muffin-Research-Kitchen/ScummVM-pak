@@ -39,10 +39,11 @@ core/
   core.lock.json                pinned source commit, deps, toolchain digest, artifact sha256
   build-core.sh                 self-contained build; refuses a hash mismatch
   PROVENANCE.md                 what was built, from what, with which flags
-LICENSES/                       GPLv3 for the core, MIT for this repo, CC0 for the art
+LICENSES/                       GPLv3 for the core; MIT and asset licence notes
 pak/
   pak.json                      provides.systems[SCUMMVM] + provides.cores[scummvm]
-  art/SCUMMVM.png               flat icon; also what the web UI serves
+  art/SCUMMVM.png               256px libretro Systematic flat icon
+  art/SCUMMVM-photo.png         384px photographic launcher icon
 scripts/
   validate-pak.py               validates against the CONTRACT's own reference validator
   make-core-info.py             produces the core's .info from the pinned source

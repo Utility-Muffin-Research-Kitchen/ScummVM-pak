@@ -52,6 +52,7 @@ package-mlp1: core
 	@mkdir -p "$(PACKAGE)/cores" "$(PACKAGE)/info" "$(PACKAGE)/art"
 	@cp "$(REPO_ROOT)/pak/pak.json" "$(PACKAGE)/pak.json"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM.png" "$(PACKAGE)/art/SCUMMVM.png"
+	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-photo.png" "$(PACKAGE)/art/SCUMMVM-photo.png"
 	@cp "$(BUILD)/core/scummvm_libretro.so" "$(PACKAGE)/cores/scummvm_libretro.so"
 	@python3 "$(REPO_ROOT)/scripts/make-core-info.py" \
 		--source "$(BUILD)/scummvm-src" \

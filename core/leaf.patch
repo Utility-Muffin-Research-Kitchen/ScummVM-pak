@@ -1,0 +1,133 @@
+diff --git a/backends/platform/libretro/include/libretro-core-options.h b/backends/platform/libretro/include/libretro-core-options.h
+index cdc8635b688..bc9b2344885 100644
+--- a/backends/platform/libretro/include/libretro-core-options.h
++++ b/backends/platform/libretro/include/libretro-core-options.h
+@@ -334,7 +334,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROK_SPACE"
++		"RETROKE_LEFT_BUTTON"
+ 	},
+ 	{
+ 		"scummvm_mapper_b",
+@@ -346,7 +346,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROK_RETURN"
++		"RETROKE_RIGHT_BUTTON"
+ 	},
+ 	{
+ 		"scummvm_mapper_x",
+@@ -358,7 +358,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROK_F5"
++		"RETROKE_SCUMMVM_GUI"
+ 	},
+ 	{
+ 		"scummvm_mapper_y",
+@@ -394,7 +394,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROKE_SCUMMVM_GUI"
++		"RETROK_RETURN"
+ 	},
+ 	{
+ 		"scummvm_mapper_l",
+@@ -406,7 +406,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROKE_LEFT_BUTTON"
++		"RETROKE_FINE_CONTROL"
+ 	},
+ 	{
+ 		"scummvm_mapper_r",
+@@ -418,7 +418,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROKE_RIGHT_BUTTON"
++		"RETROK_PERIOD"
+ 	},
+ 	{
+ 		"scummvm_mapper_l2",
+@@ -430,7 +430,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"---"
++		"RETROK_SPACE"
+ 	},
+ 	{
+ 		"scummvm_mapper_r2",
+@@ -442,7 +442,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ 		{
+ 			{ NULL, NULL }
+ 		},
+-		"RETROKE_FINE_CONTROL"
++		"---"
+ 	},
+ 	{
+ 		"scummvm_mapper_l3",
+@@ -580,11 +580,7 @@ struct retro_core_option_v2_definition option_defs_us[] = {
+ #endif
+ 			{NULL, NULL},
+ 		},
+-#ifdef USE_OPENGL
+-		"enabled"
+-#else
+ 		"disabled"
+-#endif
+ 	},
+ #ifdef USE_HIGHRES
+ 	{
+diff --git a/backends/platform/libretro/include/libretro-os.h b/backends/platform/libretro/include/libretro-os.h
+index c83c460e965..7af9b9b2476 100644
+--- a/backends/platform/libretro/include/libretro-os.h
++++ b/backends/platform/libretro/include/libretro-os.h
+@@ -65,6 +65,7 @@ private:
+ 	float _inverse_acceleration_time;
+ 	uint32 _startTime;
+ 	uint8 _cursorStatus;
++	Common::String s_coreDir;
+ 	Common::String s_systemDir;
+ 	Common::String s_saveDir;
+ 	Common::String s_playlistDir;
+diff --git a/backends/platform/libretro/src/libretro-os-base.cpp b/backends/platform/libretro/src/libretro-os-base.cpp
+index 87ef2f01e9d..ffd036f6f88 100644
+--- a/backends/platform/libretro/src/libretro-os-base.cpp
++++ b/backends/platform/libretro/src/libretro-os-base.cpp
+@@ -44,6 +44,9 @@
+ OSystem_libretro::OSystem_libretro() : _mouseX(0), _mouseY(0), _mouseXAcc(0.0), _mouseYAcc(0.0), _dpadXAcc(0.0), _dpadYAcc(0.0), _dpadXVel(0.0f), _dpadYVel(0.0f), _mixer(0), _startTime(0), _cursorStatus(0) {
+ 	_fsFactory = new FS_SYSTEM_FACTORY();
+ 
++	const char *corePath = retro_get_core_dir();
++	if (corePath)
++		setLibretroDir(Common::Path(corePath).getParent().toString().c_str(), s_coreDir);
+ 	setLibretroDir(retro_get_system_dir(), s_systemDir);
+ 	setLibretroDir(retro_get_save_dir(), s_saveDir);
+ 	setLibretroDir(retro_get_playlist_dir(), s_playlistDir);
+diff --git a/backends/platform/libretro/src/libretro-os-utils.cpp b/backends/platform/libretro/src/libretro-os-utils.cpp
+index c81781dafcb..e490acfba02 100644
+--- a/backends/platform/libretro/src/libretro-os-utils.cpp
++++ b/backends/platform/libretro/src/libretro-os-utils.cpp
+@@ -194,6 +194,14 @@ void OSystem_libretro::applyBackendSettings() {
+ 	Common::String s_homeDir(LibRetroFilesystemNode::getDefaultDir());
+ 	Common::String s_themeDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
+ 	Common::String s_extraDir(s_systemDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
++	if (!s_coreDir.empty()) {
++		Common::String bundledThemeDir(s_coreDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_THEME_SUBDIR);
++		Common::String bundledExtraDir(s_coreDir + "/" + SCUMMVM_SYSTEM_SUBDIR + "/" + SCUMMVM_EXTRA_SUBDIR);
++		if (LibRetroFilesystemNode(bundledThemeDir).isDirectory())
++			s_themeDir = bundledThemeDir;
++		if (LibRetroFilesystemNode(bundledExtraDir).isDirectory())
++			s_extraDir = bundledExtraDir;
++	}
+ 	Common::String s_soundfontPath(s_extraDir + "/" + DEFAULT_SOUNDFONT_FILENAME);
+ 
+ 	if (! LibRetroFilesystemNode(s_themeDir).isDirectory())

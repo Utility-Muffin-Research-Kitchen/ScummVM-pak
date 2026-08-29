@@ -42,6 +42,8 @@ def main() -> None:
 
     lock = json.loads(args.lock.read_text(encoding="utf-8"))
     core_commit = lock["core"]["source_commit"]
+    repo_root = args.lock.resolve().parent.parent
+    patch_path = repo_root / lock["patch"]["file"]
     deps_root = args.source / "backends/platform/libretro/deps"
     trees = [(args.source, core_commit, f"scummvm-{core_commit}/")]
     for dependency in lock["build_dependencies"]:
@@ -73,6 +75,15 @@ def main() -> None:
                 info.mode = 0o644
                 info.mtime = 0
                 output.addfile(info, io.BytesIO(lock_bytes))
+
+                patch_bytes = patch_path.read_bytes()
+                info = tarfile.TarInfo(
+                    f"scummvm-{core_commit}/{lock['patch']['file']}"
+                )
+                info.size = len(patch_bytes)
+                info.mode = 0o644
+                info.mtime = 0
+                output.addfile(info, io.BytesIO(patch_bytes))
 
 
 if __name__ == "__main__":

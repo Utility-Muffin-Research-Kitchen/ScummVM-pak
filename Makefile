@@ -44,9 +44,9 @@ core:
 verify-core:
 	@FORCE=0 "$(REPO_ROOT)/core/build-core.sh"
 
-# The .info file ships from the pinned source tree rather than being written by
-# hand: RetroArch reads it, and a hand-copied one drifts from the core it
-# describes.
+# The core's own upstream target supplies its data and .info file. The Leaf
+# patch lets ScummVM read those immutable assets beside the core while keeping
+# user-owned scummvm.ini in BIOS/.
 package-mlp1: core
 	@rm -rf "$(PACKAGE)"
 	@mkdir -p "$(PACKAGE)/cores" "$(PACKAGE)/info" "$(PACKAGE)/art"
@@ -54,10 +54,8 @@ package-mlp1: core
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM.png" "$(PACKAGE)/art/SCUMMVM.png"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-photo.png" "$(PACKAGE)/art/SCUMMVM-photo.png"
 	@cp "$(BUILD)/core/scummvm_libretro.so" "$(PACKAGE)/cores/scummvm_libretro.so"
-	@python3 "$(REPO_ROOT)/scripts/make-core-info.py" \
-		--source "$(BUILD)/scummvm-src" \
-		--lock "$(REPO_ROOT)/core/core.lock.json" \
-		--out "$(PACKAGE)/info/scummvm_libretro.info"
+	@cd "$(PACKAGE)/cores" && unzip -q "$(BUILD)/core/scummvm.zip"
+	@cp "$(BUILD)/core/scummvm_libretro.info" "$(PACKAGE)/info/scummvm_libretro.info"
 	@cp "$(REPO_ROOT)/LICENSES/CORE-LICENSE.txt" "$(PACKAGE)/LICENSE-CORE.txt"
 	@cp "$(REPO_ROOT)/pak/art/LICENSE-ASSETS.md" "$(PACKAGE)/art/LICENSE-ASSETS.md"
 	@echo "packaged $(PACKAGE)"

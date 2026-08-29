@@ -8,6 +8,11 @@
     "license": "GPL-3.0-or-later",
     "license_path_in_source": "COPYING"
   },
+  "patch": {
+    "file": "core/leaf.patch",
+    "sha256": "101730cf71470a8f6a3911a6c92c425b0d7c1d38d026591d5c22ea87e676b0b8",
+    "note": "Keeps upstream data beside the core, supplies handheld-first input defaults, and disables unsupported hardware rendering by default."
+  },
   "build_dependencies": [
     {
       "name": "libretro-deps",
@@ -31,8 +36,10 @@
   },
   "artifact": {
     "file_name": "scummvm_libretro.so",
-    "sha256": "1d8567615a8683d3dee11364f54a683afc8614fe0d5aeaffd11dd17fbfbb6323",
-    "note": "Recorded from a clean build in the digest-pinned toolchain image on 2026-08-29. The build passes the source revision explicitly so Git ownership and abbreviation rules cannot change the binary between hosts. CI is the independent verifier; investigate any mismatch rather than overwriting this value.",
-    "size_bytes": 132225784
+    "data_file_name": "scummvm.zip",
+    "info_file_name": "scummvm_libretro.info",
+    "sha256": "a478d05cf8c193f0e80bf2ad3c786e3a4ff36901e3ba00eb709e5550c0fab5f5",
+    "note": "Recorded from two clean builds in the digest-pinned toolchain image on 2026-08-29. The build passes the source revision explicitly and applies the hash-pinned Leaf patch before compilation. CI is the independent verifier; investigate any mismatch rather than overwriting this value.",
+    "size_bytes": 132229880
   }
 }

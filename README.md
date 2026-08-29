@@ -38,6 +38,7 @@ Makefile                        core / package-mlp1 / dist-pakrat / dist-source 
 core/
   core.lock.json                pinned source commit, deps, toolchain digest, artifact sha256
   build-core.sh                 self-contained build; refuses a hash mismatch
+  leaf.patch                    bundled-data lookup + handheld defaults
   PROVENANCE.md                 what was built, from what, with which flags
 LICENSES/                       GPLv3 for the core; MIT and asset licence notes
 pak/
@@ -46,11 +47,12 @@ pak/
   art/SCUMMVM-photo.png         384px photographic launcher icon
 scripts/
   validate-pak.py               validates against the CONTRACT's own reference validator
-  make-core-info.py             produces the core's .info from the pinned source
 ```
 
-`pak/cores/` and `pak/info/` are **not** in the repository. They are build
-output: `make package-mlp1` puts them into `build/package/ScummVM.pak`. A
+`pak/cores/` and `pak/info/` are **not** in the repository. The pinned
+upstream build supplies the core, canonical `.info`, themes, engine data,
+virtual keyboard, shaders, and soundfont under `build/package/ScummVM.pak`.
+The data remains beside the core; `BIOS/scummvm.ini` stays user-owned. A
 committed binary is a binary nobody can check against its source.
 
 ## Putting games in it
@@ -107,8 +109,9 @@ Worth knowing before you spend a build on them:
 
 ## Verifying the core you ship
 
-`core/build-core.sh` clones the pinned commit, builds it in a digest-pinned
-toolchain image, and compares the result against `core.lock.json`. A mismatch
+`core/build-core.sh` clones the pinned commit, verifies and applies
+`core/leaf.patch`, then builds it in a digest-pinned toolchain image and
+compares the result against `core.lock.json`. A mismatch
 fails the build rather than packaging whatever happened to be produced —
 because "the core changed and nobody noticed" is exactly the failure this
 repository is meant to make impossible.

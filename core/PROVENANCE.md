@@ -12,6 +12,12 @@ file and is what the build actually enforces; this one explains it.
 | Commit | `825fea130aba5a55005c307fb22fce2445749317` |
 | Licence | GPL-3.0-or-later (`COPYING` in that tree, copied to `LICENSES/CORE-LICENSE.txt`) |
 
+`core/leaf.patch` is hash-pinned beside the upstream commit. It makes the core
+prefer its packaged upstream data directories, changes the default RetroPad
+mapping for handheld use, and leaves hardware rendering disabled by default on
+the GLES-only MLP1 frontend. The unmodified upstream tree and this patch are
+both included in the corresponding-source archive.
+
 A branch name is not provenance. The commit is pinned because "master" is a
 different program every week, and a GPLv3 corresponding-source obligation
 attaches to the exact binary that was distributed.
@@ -60,6 +66,11 @@ make platform=unix \
 
 then `--strip-unneeded`, because the unstripped core is large and an SD card is
 not.
+
+The same pinned source target builds `scummvm.zip` and
+`scummvm_libretro.info`. The package extracts that archive beside the core, so
+themes and engine data are removed atomically with the pak instead of being
+copied into the shared `BIOS` tree.
 
 `NO_WIP=1` is upstream's default and excludes work-in-progress engines. Turning
 it on would ship engines upstream does not consider ready, under this

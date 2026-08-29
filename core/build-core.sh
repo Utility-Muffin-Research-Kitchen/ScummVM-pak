@@ -35,7 +35,12 @@ IMAGE="$(lock_get "['toolchain']['image']")"
 DIGEST="$(lock_get "['toolchain']['digest']")"
 CROSS="$(lock_get "['toolchain']['cross_prefix']")"
 ARTIFACT="$(lock_get "['artifact']['file_name']")"
+DATA_ARTIFACT="$(lock_get "['artifact']['data_file_name']")"
+INFO_ARTIFACT="$(lock_get "['artifact']['info_file_name']")"
 EXPECTED_SHA="$(lock_get "['artifact']['sha256']")"
+PATCH_REL="$(lock_get "['patch']['file']")"
+PATCH_FILE="$REPO_ROOT/$PATCH_REL"
+EXPECTED_PATCH_SHA="$(lock_get "['patch']['sha256']")"
 
 # A tag can move; a digest cannot. Prefer the digest when the lock has one, so
 # two people building months apart get the same compiler.
@@ -46,8 +51,17 @@ fi
 
 mkdir -p "$BUILD_DIR" "$OUT_DIR"
 
-if [ -f "$OUT_DIR/$ARTIFACT" ] && [ "${FORCE:-0}" != "1" ]; then
-  echo "build-core: $OUT_DIR/$ARTIFACT already present (FORCE=1 to rebuild)"
+ACTUAL_PATCH_SHA="$(python3 - "$PATCH_FILE" <<'PY'
+import hashlib, sys
+print(hashlib.sha256(open(sys.argv[1], 'rb').read()).hexdigest())
+PY
+)"
+[ "$ACTUAL_PATCH_SHA" = "$EXPECTED_PATCH_SHA" ] \
+  || die "patch sha256 mismatch: $ACTUAL_PATCH_SHA"
+
+if [ -f "$OUT_DIR/$ARTIFACT" ] && [ -f "$OUT_DIR/$DATA_ARTIFACT" ] && \
+   [ -f "$OUT_DIR/$INFO_ARTIFACT" ] && [ "${FORCE:-0}" != "1" ]; then
+  echo "build-core: core and upstream data already present (FORCE=1 to rebuild)"
 else
   if [ ! -d "$SRC_DIR/.git" ]; then
     echo "build-core: cloning $SOURCE_URL (large; one time)"
@@ -62,6 +76,14 @@ else
   [ "$ACTUAL_COMMIT" = "$SOURCE_COMMIT" ] \
     || die "checked out $ACTUAL_COMMIT, lock says $SOURCE_COMMIT"
 
+  if git -C "$SRC_DIR" apply --reverse --check "$PATCH_FILE" 2>/dev/null; then
+    echo "build-core: Leaf patch already applied"
+  else
+    git -C "$SRC_DIR" apply --check "$PATCH_FILE" \
+      || die "Leaf patch does not apply to pinned source"
+    git -C "$SRC_DIR" apply "$PATCH_FILE"
+  fi
+
   if [ "${FORCE:-0}" = "1" ]; then
     echo "build-core: removing cached build products for a clean rebuild"
     git -C "$SRC_DIR" clean -qfdx
@@ -74,6 +96,8 @@ else
     -w /src/backends/platform/libretro \
     "$IMAGE_REF" \
     /bin/sh -euc '
+      apt-get update -qq
+      DEBIAN_FRONTEND=noninteractive apt-get install -y -qq zip >/dev/null
       TC=/opt/mlp1-toolchain/bin/'"$CROSS"'
       # AR carries its operation letters in the variable upstream ("ar cru"),
       # so overriding it with a bare binary produces "ar <lib> <objs>" -- no
@@ -84,7 +108,8 @@ else
         AR="${TC}-ar cru" RANLIB="${TC}-ranlib" STRIP="${TC}-strip" \
         GIT_TAG= GIT_HASH='"$SOURCE_REV"' \
         NO_WIP=1 -j"$(nproc)"
-      cp '"$ARTIFACT"' /out/
+      make datafiles coreinfo
+      cp '"$ARTIFACT"' '"$DATA_ARTIFACT"' '"$INFO_ARTIFACT"' /out/
       "${TC}-strip" --strip-unneeded /out/'"$ARTIFACT"'
     '
 fi
@@ -92,11 +117,23 @@ fi
 # Docker Desktop can return before a bind-mounted artifact becomes visible to
 # the host. Give the mount a brief chance to catch up before declaring failure.
 for _ in {1..50}; do
-  [ -f "$OUT_DIR/$ARTIFACT" ] && break
+  [ -f "$OUT_DIR/$ARTIFACT" ] && [ -f "$OUT_DIR/$DATA_ARTIFACT" ] && \
+    [ -f "$OUT_DIR/$INFO_ARTIFACT" ] && break
   sleep 0.1
 done
 
 [ -f "$OUT_DIR/$ARTIFACT" ] || die "build produced no $ARTIFACT"
+[ -f "$OUT_DIR/$DATA_ARTIFACT" ] || die "build produced no $DATA_ARTIFACT"
+[ -f "$OUT_DIR/$INFO_ARTIFACT" ] || die "build produced no $INFO_ARTIFACT"
+
+python3 - "$OUT_DIR/$DATA_ARTIFACT" <<'PY'
+import sys, zipfile
+with zipfile.ZipFile(sys.argv[1]) as archive:
+    names = set(archive.namelist())
+for required in ("scummvm/extra/vkeybd_default.zip", "scummvm/theme/scummmodern.zip"):
+    if required not in names:
+        raise SystemExit(f"build-core: upstream data archive lacks {required}")
+PY
 
 ACTUAL_SHA="$(python3 - "$OUT_DIR/$ARTIFACT" <<'PY'
 import hashlib, sys

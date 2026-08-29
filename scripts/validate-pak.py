@@ -105,6 +105,14 @@ def main() -> int:
             print(f"FAIL {reason}")
         return 1
 
+    if args.packaged:
+        for rel in ("cores/scummvm/extra", "cores/scummvm/theme"):
+            directory = pak_dir / rel
+            if not directory.is_dir() or not any(path.is_file() for path in directory.iterdir()):
+                print(f"FAIL missing bundled data: {rel}")
+                return 1
+        print("ok   bundled data: upstream extra + theme")
+
     warnings = content_model.manifest_warnings(manifest)
     for warning in sorted(warnings):
         print(f"warn {warning}")

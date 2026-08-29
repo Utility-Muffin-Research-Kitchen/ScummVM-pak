@@ -24,18 +24,29 @@ from pathlib import Path
 def load_contract(contract_root: Path):
     scripts = contract_root / "contracts" / "leaf-content" / "scripts"
     schema = contract_root / "contracts" / "leaf-content" / "content-paks-v1.schema.json"
-    if not scripts.is_dir() or not schema.is_file():
+    scrape_schema = (
+        contract_root / "contracts" / "leaf-content" /
+        "content-scrape-v1.schema.json"
+    )
+    if not scripts.is_dir() or not schema.is_file() or not scrape_schema.is_file():
         raise SystemExit(
             f"not a leaf-contracts checkout: {contract_root}\n"
-            "expected contracts/leaf-content/ inside it"
+            "expected CONTENT-1 and CONTENT-SCRAPE-1 under contracts/leaf-content/"
         )
     sys.path.insert(0, str(scripts))
     # minischema lives with the SVC-1 contract and is shared, not copied.
     sys.path.insert(0, str(contract_root / "contracts" / "leaf-services" / "scripts"))
     import content_model  # noqa: E402
     import minischema  # noqa: E402
+    import scrape_model  # noqa: E402
 
-    return content_model, minischema, json.loads(schema.read_text())
+    return (
+        content_model,
+        scrape_model,
+        minischema,
+        json.loads(schema.read_text()),
+        json.loads(scrape_schema.read_text()),
+    )
 
 
 def authored_paths_present(manifest: dict, pak_dir: Path) -> bool:
@@ -68,7 +79,9 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    content_model, minischema, schema = load_contract(args.contract.resolve())
+    content_model, scrape_model, minischema, schema, scrape_schema = load_contract(
+        args.contract.resolve()
+    )
 
     pak_dir = args.pak.resolve()
     manifest_path = pak_dir / "pak.json"
@@ -81,6 +94,17 @@ def main() -> int:
         print(f"FAIL schema: {err}")
         return 1
     print("ok   schema: content-paks-v1")
+
+    scrape_ok, scrape_err = minischema.is_valid(manifest, scrape_schema)
+    if not scrape_ok:
+        print(f"FAIL content scrape schema: {scrape_err}")
+        return 1
+    scrape_violations = scrape_model.validate(manifest)
+    if scrape_violations:
+        for reason in sorted(scrape_violations):
+            print(f"FAIL {reason}")
+        return 1
+    print("ok   schema: content-scrape-v1")
 
     violations = content_model.validate_manifest(
         manifest, str(pak_dir),

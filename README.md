@@ -70,6 +70,13 @@ The `.scummvm` file contains **only the ScummVM game identifier**, e.g.:
 sky
 ```
 
+Leaf versions that understand `CONTENT-SCRAPE-1` use that identifier for the
+ScreenScraper lookup, while keeping the human filename as the launcher title
+and artwork filename. For example, `Kings Quest 1.svm` containing `kq1` is
+looked up as `kq1.scummvm`, but its art still lands as
+`Images/SCUMMVM/Kings Quest 1.png`. Older Leaf versions safely ignore the
+optional hint and retain filename-based scraping.
+
 The core infers the game's location from where the hook file sits, so the hook
 must live in the same directory as the game data. That matters more than it
 looks: the alternative — a target-mode hook naming a path inside

@@ -1,7 +1,7 @@
 {
   "name": "ScummVM",
   "platform": "mlp1",
-  "pak_version": "1.1.0",
+  "pak_version": "1.2.0",
   "min_leaf_version": "0.11.0",
 
   "provides": {
@@ -39,6 +39,17 @@
         "supports_menu": true,
         "supports_savestate": false,
         "supports_disk_control": false
+      }
+    ]
+  },
+
+  "content_scrape": {
+    "schema": 1,
+    "systems": [
+      {
+        "id": "SCUMMVM",
+        "name_source": "descriptor",
+        "lookup_extension": "scummvm"
       }
     ]
   }

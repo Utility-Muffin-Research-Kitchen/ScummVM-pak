@@ -16,7 +16,7 @@ env:
   # Pin the contract, not a branch. A moving contract that silently changes
   # what "valid" means is the thing this pin exists to prevent; bumping it is
   # a reviewed commit here.
-  CONTRACT_REF: f11a28a613a02cccbeccc0f0af1c01f7339fa875
+  CONTRACT_REF: b92df7d7d538ed1e21345a253f2130ce6cc5863d
 
 jobs:
   validate:
@@ -31,7 +31,7 @@ jobs:
           ref: ${{ env.CONTRACT_REF }}
           path: .contract
 
-      - name: Validate pak.json against CONTENT-1, CONTENT-SCRAPE-1 and CONTENT-ART-1
+      - name: Validate pak.json against CONTENT-1, CONTENT-SCRAPE-1 and CONTENT-ART-2
         run: make validate CONTRACT_DIR="$PWD/.contract"
 
       - name: Refuse a launch.sh

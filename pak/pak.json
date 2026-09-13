@@ -3,15 +3,19 @@
   "platform": "mlp1",
   "pak_version": "1.2.0",
   "min_leaf_version": "0.11.0",
-
   "provides": {
     "schema": 1,
     "systems": [
       {
         "id": "SCUMMVM",
         "name": "ScummVM",
-        "patterns": ["SCUMMVM"],
-        "extensions": ["scummvm", "svm"],
+        "patterns": [
+          "SCUMMVM"
+        ],
+        "extensions": [
+          "scummvm",
+          "svm"
+        ],
         "archive_extensions": [],
         "archive_mode": "pass_through",
         "playlist_extensions": [],
@@ -21,7 +25,9 @@
         "default_core": "scummvm",
         "icon_flat": "art/SCUMMVM.png",
         "icon_photographic": "art/SCUMMVM-photo.png",
-        "screenscraper_platform_ids": [123],
+        "screenscraper_platform_ids": [
+          123
+        ],
         "group": "Computer",
         "bios_directory": null
       }
@@ -42,7 +48,6 @@
       }
     ]
   },
-
   "content_scrape": {
     "schema": 1,
     "systems": [
@@ -54,7 +59,13 @@
     ]
   },
   "content_art": {
-    "schema": 1,
-    "systems": [{"id": "SCUMMVM", "wordmark": "art/SCUMMVM-wordmark.png"}]
+    "schema": 2,
+    "systems": [
+      {
+        "id": "SCUMMVM",
+        "wordmark": "art/SCUMMVM-wordmark.png",
+        "grid_icon": "art/SCUMMVM-grid.png"
+      }
+    ]
   }
 }

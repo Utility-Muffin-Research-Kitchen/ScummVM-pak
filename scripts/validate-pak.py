@@ -48,7 +48,7 @@ def load_contract(contract_root: Path):
         json.loads(schema.read_text()),
         json.loads(scrape_schema.read_text()),
         art_model,
-        json.loads((schema.parent / "content-art-v1.schema.json").read_text()),
+        json.loads((schema.parent / "content-art-v2.schema.json").read_text()),
     )
 
 
@@ -118,7 +118,7 @@ def main() -> int:
         for reason in sorted(art_violations):
             print(f"FAIL {reason}")
         return 1
-    print("ok   schema and paths: content-art-v1")
+    print("ok   schema and paths: content-art-v2")
 
     violations = content_model.validate_manifest(
         manifest, str(pak_dir),

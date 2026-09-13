@@ -4,8 +4,9 @@ Vendored from `umrk-assets/Systems/GRID_ICONS/exports/SCUMMVM.png`,
 revision `ea2bff2469922992f5f22a04d28713f090c26e8c`. SHA-256:
 `f68d07fa5f0ed6f125e4609da243c3af1232f0c296ca02d43ae84eaf8d55a248`.
 
-This 512x512 RGBA card centers the logo on white. It is prepared for
-CONTENT-ART-2; the current schema-1 manifest still advertises only the wordmark.
+This 512x512 RGBA card centers the logo on white. The CONTENT-ART-2 manifest
+advertises this card for Grid alongside the
+game-details wordmark. Older readers retain their ordinary artwork fallback.
 The package builds without the private asset repository or sibling checkouts.
 
 ## Attribution

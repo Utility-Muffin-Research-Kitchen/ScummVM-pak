@@ -53,6 +53,8 @@ package-mlp1: core
 	@cp "$(REPO_ROOT)/pak/pak.json" "$(PACKAGE)/pak.json"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM.png" "$(PACKAGE)/art/SCUMMVM.png"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-photo.png" "$(PACKAGE)/art/SCUMMVM-photo.png"
+	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-grid.png" "$(PACKAGE)/art/SCUMMVM-grid.png"
+	@cp "$(REPO_ROOT)/pak/art/GRID-ICON-SOURCE.md" "$(PACKAGE)/art/GRID-ICON-SOURCE.md"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-wordmark.png" "$(PACKAGE)/art/SCUMMVM-wordmark.png"
 	@cp "$(REPO_ROOT)/pak/art/WORDMARK-SOURCE.md" "$(PACKAGE)/art/WORDMARK-SOURCE.md"
 	@cp "$(BUILD)/core/scummvm_libretro.so" "$(PACKAGE)/cores/scummvm_libretro.so"

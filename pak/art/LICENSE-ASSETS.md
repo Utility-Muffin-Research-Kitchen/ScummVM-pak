@@ -27,3 +27,9 @@ rights holders and appears here to identify the platform.
 - Public-domain photography, AI renders, and CC BY-SA material all carry
   different obligations, and they do not all survive redistribution on an SD
   card image. Check before you ship.
+
+## System wordmark
+
+`SCUMMVM-wordmark.png` is a separate white system label. See
+[WORDMARK-SOURCE.md](WORDMARK-SOURCE.md) for its source revision, hashes,
+attribution, licence and changes.

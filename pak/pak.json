@@ -52,5 +52,9 @@
         "lookup_extension": "scummvm"
       }
     ]
+  },
+  "content_art": {
+    "schema": 1,
+    "systems": [{"id": "SCUMMVM", "wordmark": "art/SCUMMVM-wordmark.png"}]
   }
 }

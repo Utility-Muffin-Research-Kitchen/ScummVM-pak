@@ -28,7 +28,7 @@ ARTIFACT := $(DIST)/ScummVM.mlp1.pak.zip
 # a third party is judged against is one they can read. CI pins a SHA; a local
 # clone is fine for development. Nothing here needs UMRK credentials.
 CONTRACT_REPO ?= https://github.com/Utility-Muffin-Research-Kitchen/leaf-contracts.git
-CONTRACT_REF ?= main
+CONTRACT_REF ?= f11a28a613a02cccbeccc0f0af1c01f7339fa875
 CONTRACT_DIR ?= $(BUILD)/contract
 
 .PHONY: all core verify-core package-mlp1 dist-pakrat dist-source validate check clean distclean help
@@ -53,6 +53,8 @@ package-mlp1: core
 	@cp "$(REPO_ROOT)/pak/pak.json" "$(PACKAGE)/pak.json"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM.png" "$(PACKAGE)/art/SCUMMVM.png"
 	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-photo.png" "$(PACKAGE)/art/SCUMMVM-photo.png"
+	@cp "$(REPO_ROOT)/pak/art/SCUMMVM-wordmark.png" "$(PACKAGE)/art/SCUMMVM-wordmark.png"
+	@cp "$(REPO_ROOT)/pak/art/WORDMARK-SOURCE.md" "$(PACKAGE)/art/WORDMARK-SOURCE.md"
 	@cp "$(BUILD)/core/scummvm_libretro.so" "$(PACKAGE)/cores/scummvm_libretro.so"
 	@cd "$(PACKAGE)/cores" && unzip -q "$(BUILD)/core/scummvm.zip"
 	@cp "$(BUILD)/core/scummvm_libretro.info" "$(PACKAGE)/info/scummvm_libretro.info"
@@ -85,7 +87,9 @@ dist-source:
 $(CONTRACT_DIR):
 	@mkdir -p "$(BUILD)"
 	@echo "fetching contract $(CONTRACT_REF) from $(CONTRACT_REPO)"
-	@git clone -q --depth 1 --branch "$(CONTRACT_REF)" "$(CONTRACT_REPO)" "$(CONTRACT_DIR)" \
+	@(git init -q "$(CONTRACT_DIR)" && \
+	  git -C "$(CONTRACT_DIR)" fetch -q --depth 1 "$(CONTRACT_REPO)" "$(CONTRACT_REF)" && \
+	  git -C "$(CONTRACT_DIR)" checkout -q --detach FETCH_HEAD) \
 		|| (rm -rf "$(CONTRACT_DIR)"; \
 		    echo ""; \
 		    echo "could not fetch the content-pak contract." >&2; \

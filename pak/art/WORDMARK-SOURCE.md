@@ -11,14 +11,14 @@ This white RGBA export has a maximum edge of 1024 pixels. Jawaka tints it to
 the current text color. Your build uses this checked-in copy and does not fetch
 the private repository. The source revision records provenance only.
 
-## Source and licence
+## Source and license
 
 Copyright (c) 2004, 2009 Jean Marc Gimenez. Source: the official
 [ScummVM branding repository](https://github.com/scummvm/scummvm-media),
 `originals/scummvm_logo.svg`, commit
-`3685fcd62e09277e114eb0ef99091a9c55335f00`. Its explicit branding licence is
+`3685fcd62e09277e114eb0ef99091a9c55335f00`. Its explicit branding license is
 [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/), independent
-of ScummVM's software licence. The upstream licence/credit note is retained in
+of ScummVM's software license. The upstream license/credit note is retained in
 [the upstream notes](https://github.com/scummvm/scummvm-media/blob/3685fcd62e09277e114eb0ef99091a9c55335f00/originals/notes.txt).
 
 The derivative isolates the letter faces in white with an SVG luminance mask,

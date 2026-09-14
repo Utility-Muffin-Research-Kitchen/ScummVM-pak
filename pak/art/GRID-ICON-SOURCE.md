@@ -15,4 +15,4 @@ Copyright (c) 2004, 2009 Jean Marc Gimenez, [CC BY-SA 3.0](https://creativecommo
   The unchanged full-color vector is `originals/scummvm_logo.svg` in
   [scummvm-media](https://github.com/scummvm/scummvm-media/tree/3685fcd62e09277e114eb0ef99091a9c55335f00),
   revision `3685fcd62e09277e114eb0ef99091a9c55335f00`. The card adaptation is
-  also CC BY-SA 3.0. See the [upstream credit and branding licence statement](https://github.com/scummvm/scummvm-media/blob/3685fcd62e09277e114eb0ef99091a9c55335f00/originals/notes.txt).
+  also CC BY-SA 3.0. See the [upstream credit and branding license statement](https://github.com/scummvm/scummvm-media/blob/3685fcd62e09277e114eb0ef99091a9c55335f00/originals/notes.txt).

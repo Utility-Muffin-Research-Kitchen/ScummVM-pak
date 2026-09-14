@@ -28,7 +28,7 @@ ARTIFACT := $(DIST)/ScummVM.mlp1.pak.zip
 # a third party is judged against is one they can read. CI pins a SHA; a local
 # clone is fine for development. Nothing here needs UMRK credentials.
 CONTRACT_REPO ?= https://github.com/Utility-Muffin-Research-Kitchen/leaf-contracts.git
-CONTRACT_REF ?= ad1dc3aab0d36abe707634ca10d8b863b3189c94
+CONTRACT_REF ?= de9415e0679ec9a3d020093254232a86fa5efdd7
 CONTRACT_DIR ?= $(BUILD)/contract
 
 .PHONY: all core verify-core package-mlp1 dist-pakrat dist-source validate check clean distclean help

@@ -39,6 +39,7 @@ def load_contract(contract_root: Path):
     import content_model  # noqa: E402
     import minischema  # noqa: E402
     import scrape_model  # noqa: E402
+    import art_model  # noqa: E402
 
     return (
         content_model,
@@ -46,6 +47,8 @@ def load_contract(contract_root: Path):
         minischema,
         json.loads(schema.read_text()),
         json.loads(scrape_schema.read_text()),
+        art_model,
+        json.loads((schema.parent / "content-art-v2.schema.json").read_text()),
     )
 
 
@@ -79,7 +82,7 @@ def main() -> int:
     )
     args = parser.parse_args()
 
-    content_model, scrape_model, minischema, schema, scrape_schema = load_contract(
+    content_model, scrape_model, minischema, schema, scrape_schema, art_model, art_schema = load_contract(
         args.contract.resolve()
     )
 
@@ -105,6 +108,17 @@ def main() -> int:
             print(f"FAIL {reason}")
         return 1
     print("ok   schema: content-scrape-v1")
+
+    art_ok, art_err = minischema.is_valid(manifest, art_schema)
+    if not art_ok:
+        print(f"FAIL content art schema: {art_err}")
+        return 1
+    art_violations = art_model.validate(manifest, str(pak_dir))
+    if art_violations:
+        for reason in sorted(art_violations):
+            print(f"FAIL {reason}")
+        return 1
+    print("ok   schema and paths: content-art-v2")
 
     violations = content_model.validate_manifest(
         manifest, str(pak_dir),

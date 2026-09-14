@@ -5,7 +5,7 @@
   Source:  https://github.com/libretro/retroarch-assets
   Path:    xmb/systematic/png/ScummVM.png
   Commit:  e11d6708b49a893f392b238effc713c6c7cfadef
-  Licence: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
+  License: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
 
 Original authors: libretro team and contributors. The file is redistributed
 unchanged.
@@ -23,7 +23,19 @@ rights holders and appears here to identify the platform.
 
 - Keep flat icons 256x256 RGBA and photographic icons square RGBA PNGs. The
   bundled photographic pack uses 384x384 runtime copies.
-- Record where your replacement came from in this file, with its licence.
+- Record where your replacement came from in this file, with its license.
 - Public-domain photography, AI renders, and CC BY-SA material all carry
   different obligations, and they do not all survive redistribution on an SD
   card image. Check before you ship.
+
+## System wordmark
+
+`SCUMMVM-wordmark.png` is a separate white system label. See
+[WORDMARK-SOURCE.md](WORDMARK-SOURCE.md) for its source revision, hashes,
+attribution, license and changes.
+
+## Grid icon
+
+`SCUMMVM-grid.png` is the 512x512 card shown on the Grid layout tile. See
+[GRID-ICON-SOURCE.md](GRID-ICON-SOURCE.md) for its source revision, hash,
+attribution and license.

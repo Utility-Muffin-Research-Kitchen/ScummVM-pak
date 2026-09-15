@@ -1,6 +1,6 @@
 name: ci
 
-# Builds the pinned core, packages the pak, and validates it against the
+# Builds the pinned core and standalone, packages the pak, and validates it against the
 # content-pak contract at a pinned leaf-contracts SHA.
 #
 # Nothing here assumes a UMRK workspace layout: the runner starts from a bare
@@ -49,7 +49,7 @@ jobs:
           # The whole point of this repository is that someone can clone it
           # and build. A '../' in the build system means they cannot.
           if grep -REn '\.\./(Cores-spruce|Leaf|Jawaka|Catastrophe|umrk-workspace|mlp1-toolchain)' \
-               Makefile core scripts .github 2>/dev/null; then
+               Makefile core standalone scripts tests .github 2>/dev/null; then
             echo "build system references a sibling checkout" >&2
             exit 1
           fi
@@ -64,6 +64,12 @@ jobs:
 
       - name: Build the pinned core
         run: make core
+
+      - name: Build the pinned standalone ScummVM
+        run: make standalone
+
+      - name: Check the standalone launch wrapper
+        run: make test-wrapper
 
       - name: Package and hash
         run: make dist-pakrat
@@ -91,3 +97,5 @@ jobs:
             build/dist/ScummVM.mlp1.pak.zip
             build/dist/scummvm-corresponding-source.tar.gz
             build/dist/core.lock.json
+            build/dist/scummvm-standalone-corresponding-source.tar.gz
+            build/dist/standalone.lock.json

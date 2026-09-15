@@ -1,0 +1,116 @@
+{
+  "schema": 2,
+  "note": "Everything needed to reproduce the shipped standalone ScummVM binary. A fresh clone of this repository plus Docker is the whole toolchain: no sibling checkout, no locally built image, no opaque downloaded binary. ScummVM itself is unpatched. `make standalone` refuses a source archive, patch or artifact whose sha256 does not match this file.",
+  "core": {
+    "id": "scummvm_standalone",
+    "source_url": "https://github.com/scummvm/scummvm.git",
+    "source_tag": "v2026.3.0",
+    "source_commit": "fed42f2068dcafc6aafa1c28c77e4c88def74b66",
+    "license": "GPL-3.0-or-later",
+    "license_path_in_source": "COPYING"
+  },
+  "codecs": [
+    {
+      "name": "libogg",
+      "version": "1.3.5",
+      "file": "libogg-1.3.5.tar.xz",
+      "url": "https://downloads.xiph.org/releases/ogg/libogg-1.3.5.tar.xz",
+      "sha256": "c4d91be36fc8e54deae7575241e03f4211eb102afb3fc0775fbbc1b740016705",
+      "license": "BSD-3-Clause",
+      "license_files": ["COPYING"]
+    },
+    {
+      "name": "libvorbis",
+      "version": "1.3.7",
+      "file": "libvorbis-1.3.7.tar.xz",
+      "url": "https://downloads.xiph.org/releases/vorbis/libvorbis-1.3.7.tar.xz",
+      "sha256": "b33cc4934322bcbf6efcbacf49e3ca01aadbea4114ec9589d1b1e9d20f72954b",
+      "license": "BSD-3-Clause",
+      "license_files": ["COPYING"]
+    },
+    {
+      "name": "flac",
+      "version": "1.4.3",
+      "file": "flac-1.4.3.tar.xz",
+      "url": "https://downloads.xiph.org/releases/flac/flac-1.4.3.tar.xz",
+      "sha256": "6c58e69cd22348f441b861092b825e591d0b822e106de6eb0ee4d05d27205b70",
+      "license": "BSD-3-Clause (libFLAC, COPYING.Xiph)",
+      "license_files": ["COPYING.Xiph"]
+    },
+    {
+      "name": "libmad",
+      "version": "0.15.1b",
+      "file": "libmad-0.15.1b.tar.gz",
+      "url": "https://downloads.sourceforge.net/project/mad/libmad/0.15.1b/libmad-0.15.1b.tar.gz",
+      "sha256": "bbfac3ed6bfbc2823d3775ebb931087371e142bb0e9bb1bee51a76a6e0078690",
+      "license": "GPL-2.0-or-later",
+      "license_files": ["COPYING"],
+      "debian_patch": {
+        "file": "libmad_0.15.1b-10.diff.gz",
+        "url": "https://snapshot.debian.org/archive/debian/20190310T213528Z/pool/main/libm/libmad/libmad_0.15.1b-10.diff.gz",
+        "sha256": "dfeabd5d2398bf902660edc31f87ad40600f0aa732b946f864d8ee6bbf56a99c",
+        "note": "Applied first, then the Buildroot patches, then every debian/patches entry in series order. Carries md_size.diff (CVE-2017-8372, CVE-2017-8373) and length-check.patch (CVE-2017-8374)."
+      },
+      "patches": [
+        {
+          "file": "standalone/patches/libmad/0001-mips-h-constraint-removal.patch",
+          "sha256": "0cf6ca38d1098a8ed6567272e0a3a56d801bbe9b7d871edd017dd1f18324e12d"
+        },
+        {
+          "file": "standalone/patches/libmad/0002-configure-ac-automake-foreign.patch",
+          "sha256": "78e07b7f5fb0ed25234b35976fbacfb9d70050044fabdb8f5238c2b5d0a68b0f"
+        }
+      ]
+    }
+  ],
+  "codec_reference": "Versions, archive hashes, the libmad Debian diff and both libmad patches match Buildroot 2024.02, the release the toolchain image is built from.",
+  "build": {
+    "backend": "sdl",
+    "sdl2": "device-provided libSDL2-2.0.so.0, linked dynamically; the toolchain sysroot and the MLP1 both ship SDL 2.28.5",
+    "codecs_linkage": "static, from the sources above",
+    "source_date_epoch": 1781969569,
+    "source_date_note": "The pinned commit's committer timestamp. Freezes base/version.cpp's __DATE__/__TIME__ so two builds of the same tree produce the same bytes.",
+    "configure": [
+      "--host=aarch64-buildroot-linux-gnu",
+      "--prefix=/usr",
+      "--backend=sdl",
+      "--with-sdl-prefix=<sysroot>/usr",
+      "--enable-release-mode",
+      "--enable-optimizations",
+      "--disable-debug",
+      "--enable-vkeybd",
+      "--disable-cloud",
+      "--disable-libcurl",
+      "--disable-sdlnet",
+      "--disable-discord",
+      "--disable-tts",
+      "--disable-updates",
+      "--disable-fluidsynth",
+      "--enable-vorbis",
+      "--disable-tremor",
+      "--with-ogg-prefix=<deps>",
+      "--with-vorbis-prefix=<deps>",
+      "--enable-flac",
+      "--with-flac-prefix=<deps>",
+      "--enable-mad",
+      "--with-mad-prefix=<deps>"
+    ]
+  },
+  "toolchain": {
+    "image": "ghcr.io/utility-muffin-research-kitchen/mlp1-toolchain:latest",
+    "digest": "sha256:66aac16fb8b07e663c9b4d66970f272df195a6eba98dfad8286eabbaa617faf9",
+    "cross_prefix": "aarch64-buildroot-linux-gnu",
+    "target": "aarch64 Cortex-A55, glibc 2.38 (Miniloong Pocket 1 / RK3566)"
+  },
+  "device": {
+    "glibc_ceiling": "2.38",
+    "allowed_libraries": "standalone/device-libs.txt",
+    "checked": "2026-09-15 on an MLP1 running Leaf 0.12.0-beta.1: every listed library present in /lib"
+  },
+  "artifact": {
+    "file_name": "scummvm",
+    "sha256": "35c65f35a7226a41bbaae12cebe64a3bdc333e19354cbfde9d493f2d1815591c",
+    "size_bytes": 107520464,
+    "note": "Recorded 2026-09-15 from two clean FORCE=1 builds (codecs and ScummVM rebuilt from scratch) in the digest-pinned toolchain that agreed byte for byte. CI is the independent second-machine verifier; investigate any mismatch rather than overwriting this value."
+  }
+}

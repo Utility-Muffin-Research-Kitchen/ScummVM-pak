@@ -62,7 +62,9 @@ def authored_paths_present(manifest: dict, pak_dir: Path) -> bool:
             if isinstance(value, str) and value:
                 authored.append(value)
     for core in provides.get("cores", []):
-        if core.get("type") == "standalone":
+        # The contract's standalone core type is "path"; the target script is
+        # authored in this repository (the compiled binary it launches is not).
+        if core.get("type") == "path":
             value = core.get("path")
             if isinstance(value, str) and value:
                 authored.append(value)
@@ -150,6 +152,31 @@ def main() -> int:
                 print(f"FAIL missing bundled data: {rel}")
                 return 1
         print("ok   bundled data: upstream extra + theme")
+
+        # The standalone lane is not a manifest-declared file set: the manifest
+        # declares the wrapper, and the compiled binary, its upstream data and
+        # the licence notices ship beside it. Check them explicitly so a
+        # package missing any of them cannot pass.
+        standalone = pak_dir / "emulators" / "scummvm-standalone"
+        for rel in ("launch-game.sh", "bin/scummvm"):
+            path = standalone / rel
+            if not path.is_file() or not (path.stat().st_mode & 0o111):
+                print(f"FAIL standalone: missing or non-executable emulators/scummvm-standalone/{rel}")
+                return 1
+        if not (standalone / "defaults" / "scummvm.ini").is_file():
+            print("FAIL standalone: missing emulators/scummvm-standalone/defaults/scummvm.ini")
+            return 1
+        share = standalone / "share" / "scummvm"
+        if not share.is_dir() or not any(path.is_file() for path in share.iterdir()):
+            print("FAIL standalone: missing emulators/scummvm-standalone/share/scummvm")
+            return 1
+        notices = ("scummvm-COPYING", "libogg-COPYING", "libvorbis-COPYING",
+                   "flac-COPYING.Xiph", "libmad-COPYING")
+        missing = [n for n in notices if not (standalone / "licenses" / n).is_file()]
+        if missing:
+            print(f"FAIL standalone: missing licence notices: {', '.join(missing)}")
+            return 1
+        print("ok   bundled data: standalone wrapper, binary, data and licence notices")
 
     warnings = content_model.manifest_warnings(manifest)
     for warning in sorted(warnings):

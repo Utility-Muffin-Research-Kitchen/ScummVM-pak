@@ -73,8 +73,7 @@ What changes when you do:
 - **Start** opens ScummVM's own menu, where you save, load, change options and
   quit. **Select** opens the virtual keyboard.
 - **Menu** asks "Return to Leaf?". Press Menu again to leave the game. Leaving
-  this way doesn't save, so save from ScummVM's menu first. Leaf versions
-  without the prompt leave on the first press.
+  this way doesn't save, so save from ScummVM's menu first.
 - Each game has its own button actions. In Flight of the Amazon Queen, for
   example, X opens the journal, which also skips the current scene. To change
   a game's buttons, open ScummVM's menu with Start and go to
@@ -86,9 +85,9 @@ What changes when you do:
 - **Return to Launcher** in ScummVM's menu shows ScummVM's own game list. Choose
   **Quit** there, or press Menu, to go back to Leaf.
 
-The standalone emulator needs a Leaf version that launches a system's default
-core ahead of an installed alternate. On an older Leaf, games with no emulator
-chosen start on the standalone instead.
+This version needs Leaf 0.12.0 or newer. On Leaf 0.12.0 beta 1, games with no
+emulator chosen start on the standalone instead of the libretro core, and Menu
+leaves the standalone on the first press. Leaf 0.12.0 beta 2 fixes both.
 
 ## Layout
 

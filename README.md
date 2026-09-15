@@ -72,8 +72,9 @@ What changes when you do:
 
 - **Start** opens ScummVM's own menu, where you save, load, change options and
   quit. **Select** opens the virtual keyboard.
-- **Menu** ends the game straight away, without saving. Save from ScummVM's
-  menu first.
+- **Menu** asks "Return to Leaf?". Press Menu again to leave the game. Leaving
+  this way doesn't save, so save from ScummVM's menu first. Leaf versions
+  without the prompt leave on the first press.
 - Saves and settings are separate from the libretro core's. Switching
   emulators doesn't move a save.
 - ScummVM's options apply to every game, and each game's own options and key

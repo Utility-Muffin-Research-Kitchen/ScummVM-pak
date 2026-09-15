@@ -164,8 +164,9 @@ printf '%s\n' "$args" | grep -Fxq -- "--path=$(CDPATH= cd -- "$ROOT/Monkey Islan
     fail "missing --path for the game folder: $args"
 printf '%s\n' "$args" | grep -Fxq -- "--config=$INI" && pass || fail "missing --config"
 
-# The built-in pad is named by its printed labels: A is button 1, B button 0.
-printf '%s\n' "$args" | grep -q '^SDL_GAMECONTROLLERCONFIG=19000000039900001399000002010000,Loong Gamepad,a:b1,b:b0,x:b3,y:b2,' &&
+# The built-in pad is named by its printed labels: A is button 1, B button 0,
+# X button 2, Y button 3.
+printf '%s\n' "$args" | grep -q '^SDL_GAMECONTROLLERCONFIG=19000000039900001399000002010000,Loong Gamepad,a:b1,b:b0,x:b2,y:b3,' &&
     pass || fail "missing label-correct pad mapping: $args"
 
 # A target whose recorded game differs is refused, not shared.

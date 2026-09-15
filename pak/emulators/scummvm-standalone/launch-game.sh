@@ -184,12 +184,13 @@ else
 fi
 
 # Controls. SDL's built-in mapping for the MLP1's pad reads the bottom face
-# button as A, but the pad is labelled Nintendo-style, so ScummVM's "A" would
-# land on the button printed B. Name the built-in pad's buttons by their
-# printed labels. The GUID leaves out SDL's name checksum, so it matches the
-# raw pad and Leaf's calibrated copy of it; other controllers keep SDL's own
-# mappings, which follow later in the variable.
-MLP1_PAD="19000000039900001399000002010000,Loong Gamepad,a:b1,b:b0,x:b3,y:b2,back:b8,start:b9,guide:b10,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,leftx:a0,lefty:a1,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,platform:Linux,"
+# button as A and the right one as B, but the pad is labelled Nintendo-style,
+# so ScummVM's "A" would land on the button printed B. Name the built-in pad's
+# buttons by their printed labels: A is BTN_EAST (button 1), B is BTN_SOUTH
+# (0), X is BTN_NORTH (2), Y is BTN_WEST (3). The GUID leaves out SDL's name
+# checksum, so it matches the raw pad and Leaf's calibrated copy of it; other
+# controllers keep SDL's own mappings, which follow later in the variable.
+MLP1_PAD="19000000039900001399000002010000,Loong Gamepad,a:b1,b:b0,x:b2,y:b3,back:b8,start:b9,guide:b10,leftshoulder:b4,rightshoulder:b5,lefttrigger:b6,righttrigger:b7,leftstick:b11,leftx:a0,lefty:a1,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,platform:Linux,"
 SDL_GAMECONTROLLERCONFIG="$MLP1_PAD${SDL_GAMECONTROLLERCONFIG:+
 $SDL_GAMECONTROLLERCONFIG}"
 export SDL_GAMECONTROLLERCONFIG
